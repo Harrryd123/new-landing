@@ -30,7 +30,7 @@ function slidePrev() {
 function startAutoSlide() {
     autoSlideInterval = setInterval(() => {
         slideNext();
-    }, 3000);
+    }, 1000);
 }
 
 function stopAutoSlide() {
@@ -73,40 +73,22 @@ startAutoSlide();
 
 
 const brandSlider = document.getElementById("brandSlider");
-const brandNext = document.querySelector(".nav.next");
-const brandPrev = document.querySelector(".nav.prev");
 
-if (brandSlider && brandNext && brandPrev) {
-    const cardWidth = brandSlider.querySelector(".brand-card").offsetWidth + 18;
+if (brandSlider) {
+    const cardWidth = brandSlider.querySelector(".brand-card").offsetWidth + 32; // 32px gap from CSS
     let brandAutoSlide;
 
 
     function slideNextBrand() {
         const maxScroll = brandSlider.scrollWidth - brandSlider.clientWidth;
 
-
         if (brandSlider.scrollLeft >= maxScroll - 10) {
-
+            // Loop back to start
             brandSlider.scrollTo({ left: 0, behavior: "smooth" });
         } else {
-
+            // Scroll to next card
             brandSlider.scrollBy({
                 left: cardWidth,
-                behavior: "smooth"
-            });
-        }
-    }
-
-
-    function slidePrevBrand() {
-
-        if (brandSlider.scrollLeft <= 10) {
-
-            brandSlider.scrollTo({ left: brandSlider.scrollWidth, behavior: "smooth" });
-        } else {
-
-            brandSlider.scrollBy({
-                left: -cardWidth,
                 behavior: "smooth"
             });
         }
@@ -116,7 +98,7 @@ if (brandSlider && brandNext && brandPrev) {
     function startBrandAutoSlide() {
         brandAutoSlide = setInterval(function() {
             slideNextBrand();
-        }, 3000);
+        }, 1000);
     }
 
 
@@ -131,17 +113,6 @@ if (brandSlider && brandNext && brandPrev) {
     }
 
 
-    brandNext.onclick = function() {
-        slideNextBrand();
-        restartBrandAutoSlide();
-    };
-
-
-    brandPrev.onclick = function() {
-        slidePrevBrand();
-        restartBrandAutoSlide();
-    };
-
 
     brandSlider.onmouseenter = function() {
         stopBrandAutoSlide();
@@ -152,14 +123,14 @@ if (brandSlider && brandNext && brandPrev) {
     };
 
 
+
     brandSlider.addEventListener("touchstart", stopBrandAutoSlide);
     brandSlider.addEventListener("touchend", restartBrandAutoSlide);
 
 
+
     startBrandAutoSlide();
 }
-
-
 
 const desktopSlider = document.querySelector(".desktop-slider");
 const desktopCards = document.querySelectorAll(".testimonial-card-desktop");
@@ -348,11 +319,8 @@ window.addEventListener('resize', function() {
 
 
 
-
-
 (function() {
     'use strict';
-
 
     const config = {
         threshold: 0.15,
@@ -381,34 +349,28 @@ window.addEventListener('resize', function() {
         '.content-block'
     ];
 
-
+    // Simplified animation types - removed bounce and elastic effects
     const animationTypes = [
         'fade-up',
+        'fade-down',
         'slide-left',
         'slide-right',
-        'zoom-in',
-        'blur',
-        'elastic'
+        'zoom-in'
     ];
-
 
     function initScrollAnimations() {
         let elementIndex = 0;
-
 
         autoDetectSelectors.forEach(selector => {
             const elements = document.querySelectorAll(selector);
 
             elements.forEach((element, index) => {
-
                 if (!element.hasAttribute('data-scroll')) {
-
-
                     const animationType = animationTypes[elementIndex % animationTypes.length];
                     element.setAttribute('data-scroll', animationType);
 
-
-                    const delay = (index % 4) * 100;
+                    // Reduced delay for smoother feel
+                    const delay = (index % 4) * 80;
                     if (delay > 0) {
                         element.setAttribute('data-delay', delay);
                     }
@@ -418,19 +380,15 @@ window.addEventListener('resize', function() {
             });
         });
 
-
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-
                     entry.target.classList.add('is-visible');
-
 
                     if (config.animateOnce) {
                         observer.unobserve(entry.target);
                     }
                 } else {
-
                     if (!config.animateOnce) {
                         entry.target.classList.remove('is-visible');
                     }
@@ -441,22 +399,19 @@ window.addEventListener('resize', function() {
             rootMargin: config.rootMargin
         });
 
-
         const animatedElements = document.querySelectorAll('[data-scroll]');
         animatedElements.forEach(element => {
             observer.observe(element);
         });
 
-        console.log(`🎬 ${animatedElements.length} elements ko scroll animation mili!`);
+        console.log(`🎬 ${animatedElements.length} elements ko smooth scroll animation mili!`);
     }
-
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initScrollAnimations);
     } else {
         initScrollAnimations();
     }
-
 
     window.refreshScrollAnimations = initScrollAnimations;
 
